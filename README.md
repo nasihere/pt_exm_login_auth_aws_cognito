@@ -1,2 +1,3 @@
-# pt_exm_login_auth_aws
-# pt_exm_login_auth_aws
+# ExpressTSCognito
+  A backend server configured to point to cognito for authentication
+  
