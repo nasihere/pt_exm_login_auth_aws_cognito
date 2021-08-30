@@ -12,6 +12,43 @@ class AuthMiddleware {
   constructor() {
     this.setUp()
   }
+  public verifyToken(req: Request, resp: Response, next): void {
+    console.log("Middleware", req.path)
+    const nonSecurePaths = ['/', '/auth/signin', '/auth/signup','/auth/verify'];
+    if (nonSecurePaths.includes(req.path)) return next();
+    
+    
+    const  token = req.header("authorization");
+    if (!token) {
+      console.log("No token found");
+      return resp.status(401).end();
+    }
+
+    let decodedJwt: any = jwt.decode(token, { complete: true });
+    if (decodedJwt === null) {
+      console.log("verify expired");
+      resp.status(401).end()
+      return
+    }
+    console.log(decodedJwt)
+    let kid = decodedJwt.header.kid;
+    let pem = pems[kid];
+    console.log(pem)
+    if (!pem) {
+      console.log("verify expired");
+      resp.status(401).end()
+      return
+    }
+    jwt.verify(token, pem, function (err: any, payload: any) {
+      if (err) {
+        console.log("verify expired", err);
+        resp.status(401).end()
+        return
+      } else {
+        next()
+      }
+    })
+  }
 
 
   private async setUp() {
