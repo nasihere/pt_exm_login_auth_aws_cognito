@@ -49,7 +49,7 @@ export default class Cognito {
     try {
       let data = await this.cognitoIdentity.initiateAuth(params).promise();
       console.log(data); 
-      return true;
+      return data;
     } catch (error) {
       console.log(error)
       return false;
